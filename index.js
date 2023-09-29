@@ -3,18 +3,16 @@ import path from "path";
 import multer from "multer";
 import dotenv from "dotenv";
 import connection from "./db.js";
-import userRoute from "./routes/user.js";
+import userRoute from "./routes/auth.js";
 import profileRoute from "./routes/profile.js";
 import { updateProfile } from "./controllers/profile.js";
-import { register } from "./controllers/user.js";
+import { register } from "./controllers/auth.js";
 import { fileURLToPath } from "url";
 import authentication from './middileware/auth.js'
-
 
 dotenv.config();
 const app = express();
 const port = process.env.PORT;
-
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
