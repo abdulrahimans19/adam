@@ -2,12 +2,14 @@ import jwt from "jsonwebtoken";
 
 export default function verifyToken(req, res, next) {
   const token = req.header("Authorization");
-
+  try {
   if (!token) {
     return res.status(401).json({ msg: "Unauthorized" });
   }
-
-  try {
+  if(token.startsWith("Bearer")){
+    token=token.slice(7,token.length).trimLeft()
+  }
+  
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     req.user = decoded.user;
     next();
