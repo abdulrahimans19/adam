@@ -1,9 +1,11 @@
 import User from "../models/User.js";
 import bcrypt from "bcrypt";
+import fs from 'fs'
 
 export const getProfile = async (req, res) => {
   try {
     const user = req.user;
+    
     res.status(200).json({ user });
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -13,7 +15,9 @@ export const getProfile = async (req, res) => {
 export const updateProfile = async (req, res) => {
   try {
     const { currentPassword, newPassword, confirmNewPassword } = req.body;
-    const user = await User.findById(req.user);
+    const userId=req.user
+    const user = await User.findById(userId);
+    
     if (!user) {
       return res.status(404).json({ msg: "User not found" });
     }
@@ -29,9 +33,12 @@ export const updateProfile = async (req, res) => {
     if (!isPasswordMatch) {
       return res.status(401).json({ msg: "Current password is incorrect" });
     }
-    const profileImage = req.file.filename;
-    if (profileImage) {
-      user.profilePicture = profileImage;
+    if(req.file){
+      if(user.profilePicture){
+        const oldProfilePicture=`public/assets/${user.profilePicture}`;
+        fs.unlinkSync(oldProfilePicture)
+      }
+      user.profilePicture=req.file.filename
     }
     if (newPassword) {
       const saltRounds = 10;
